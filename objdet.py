@@ -3,49 +3,78 @@ from imageai.Detection import ObjectDetection
 import os
 import shutil
 
-execution_path = os.getcwd()
+path = "./download/"
+c = 0
 
-detector = ObjectDetection()
-detector.setModelTypeAsRetinaNet()
-detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
-detector.loadModel()
+ws_folders = os.listdir(path)
 
-custom_objects = detector.CustomObjects(car=True)
-detections, objects_path = detector.detectCustomObjectsFromImage(custom_objects=custom_objects, input_image=os.path.join(execution_path, "image.jpg"), output_image_path=os.path.join(execution_path, "imagenew.jpg"), minimum_percentage_probability=30,  extract_detected_objects=True)
+for i in range(1, len(ws_folders)):
+    b_folders = os.listdir(path + ws_folders[i])
+    if 'item_links.json' in b_folders:
+        b_folders.remove('item_links.json')
+    if 'items.json' in b_folders:
+        b_folders.remove('items.json')
 
-for eachObject, eachObjectPath in zip(detections, objects_path):
-    print(eachObject["name"], " : ", eachObject["percentage_probability"], " : ", eachObject["box_points"])
-    print("Object's image saved in " + eachObjectPath)
-    print("--------------------------------")
+    for y in range(0, len(b_folders)):
+        id_folders = os.listdir(path + ws_folders[i] + '/' + b_folders[y])
 
-path = "./imagenew.jpg-objects/"
+        for z in range(0, len(id_folders)):
+            jpg_files = os.listdir(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z])
+            jpg_files.remove('meta.json')
 
-image_file = "image.jpg"
-img = Image.open(image_file)
-width, height = img.size
-image_o_size = width * height
+            for a in range(0, len(jpg_files)):
+                print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])
 
-data = []
-percens = []
-cont = 0
+                execution_path = os.getcwd()
 
-for i in range(1, len([f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]) + 1):
-    image_file = "./imagenew.jpg-objects/car-" + str(i) + ".jpg"
-    img = Image.open(image_file)
-    width, height = img.size
-    data += [[(width * height * 100) / image_o_size, image_file]]
-    percens += [data[cont][0]]
-    cont += 1
+                detector = ObjectDetection()
+                detector.setModelTypeAsRetinaNet()
+                detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
+                detector.loadModel()
 
-max_per = max(percens)
+                custom_objects = detector.CustomObjects(car=True)
+                detections, objects_path = detector.detectCustomObjectsFromImage(custom_objects=custom_objects, input_image=os.path.join(execution_path, path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]), output_image_path=os.path.join(execution_path, 'x' + jpg_files[a]), minimum_percentage_probability=30, extract_detected_objects=True)
 
-route = "./download/images"
+                for eachObject, eachObjectPath in zip(detections, objects_path):
+                    print(eachObject["name"], " : ", eachObject["percentage_probability"], " : ",
+                          eachObject["box_points"])
+                    print("Object's image saved in " + eachObjectPath)
+                    print("--------------------------------")
+                    c += 1
 
-if not os.path.exists(route):
-    os.makedirs(route)
+                if c > 0:  # se detectaron autos en la imagen
+                    image_file = "./download/" + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]
+                    img = Image.open(image_file)
+                    width, height = img.size
+                    image_o_size = width * height
 
-for i in range(0, len(data)):
-    if data[i][0] == max_per:
-        os.rename(data[i][1], "./download/images/image.jpg")
-        shutil.rmtree("./imagenew.jpg-objects/")
-        os.remove("imagenew.jpg")
+                    data = []
+                    percens = []
+                    cont = 0
+                    path2 = "./" + 'x' + jpg_files[a] + "-objects/"
+
+                    files = os.listdir(path2)
+                    q_files = len(files)
+
+                    for i in range(0, q_files):
+                        s_image_file = "./" + 'x' + jpg_files[a] + "-objects/car-" + str(i + 1) + ".jpg"
+                        img = Image.open(s_image_file)
+                        width, height = img.size
+                        data += [[(width * height * 100) / image_o_size, s_image_file]]
+                        percens += [data[cont][0]]
+                        cont += 1
+
+                    max_per = max(percens)
+
+                    route = "./download/images"
+
+                    if not os.path.exists(route):
+                        os.makedirs(route)
+
+                    for i in range(0, len(data)):
+                        if data[i][0] == max_per:
+                            os.rename(data[i][1], "./download/images/" + jpg_files[a])
+                            shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")
+                            os.remove('./' + 'x' + jpg_files[a])
+                else:  # no se detectaron autos en la imagen
+                    continue
