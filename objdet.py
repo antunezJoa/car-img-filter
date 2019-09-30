@@ -56,8 +56,8 @@ for i in range(1, len(ws_folders)):
                     files = os.listdir(path2)
                     q_files = len(files)
 
-                    for i in range(0, q_files):
-                        s_image_file = "./" + 'x' + jpg_files[a] + "-objects/car-" + str(i + 1) + ".jpg"
+                    for j in range(0, q_files):
+                        s_image_file = "./" + 'x' + jpg_files[a] + "-objects/car-" + str(j + 1) + ".jpg"
                         img = Image.open(s_image_file)
                         width, height = img.size
                         data += [[(width * height * 100) / image_o_size, s_image_file]]  # guardo en un array el % sobre la cantidad total de pixeles y la ruta de dicha imagen
@@ -71,8 +71,8 @@ for i in range(1, len(ws_folders)):
                     if not os.path.exists(route):
                         os.makedirs(route)
 
-                    for i in range(0, len(data)):
-                        if data[i][0] == max_per:
+                    for x in range(0, len(data)):
+                        if data[x][0] == max_per:
                             os.rename(data[i][1], "./download/images/" + jpg_files[a])  # muevo dicha imagen asociada a una carpeta
                             shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")  # remuevo el directorio con los autos detectados de la imagen original
                             os.remove('./' + 'x' + jpg_files[a])  # remuevo la imagen que se creo en la deteccion de objetos

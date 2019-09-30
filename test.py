@@ -25,4 +25,3 @@ for i in range(0, len(ws_folders)):
 
             for a in range(0, len(jpg_files)):
                 print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])
-                time.sleep(1)
