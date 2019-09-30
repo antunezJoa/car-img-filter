@@ -23,7 +23,7 @@ for i in range(1, len(ws_folders)):
             jpg_files.remove('meta.json')
 
             for a in range(0, len(jpg_files)):
-                print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])
+                print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])  # ruta de los archivos .jpg
 
                 execution_path = os.getcwd()
 
@@ -46,7 +46,7 @@ for i in range(1, len(ws_folders)):
                     image_file = "./download/" + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]
                     img = Image.open(image_file)
                     width, height = img.size
-                    image_o_size = width * height
+                    image_o_size = width * height  # cantidad de pixeles de la imagen original a comparar
 
                     data = []
                     percens = []
@@ -60,11 +60,11 @@ for i in range(1, len(ws_folders)):
                         s_image_file = "./" + 'x' + jpg_files[a] + "-objects/car-" + str(i + 1) + ".jpg"
                         img = Image.open(s_image_file)
                         width, height = img.size
-                        data += [[(width * height * 100) / image_o_size, s_image_file]]
+                        data += [[(width * height * 100) / image_o_size, s_image_file]]  # guardo en un array el % sobre la cantidad total de pixeles y la ruta de dicha imagen
                         percens += [data[cont][0]]
                         cont += 1
 
-                    max_per = max(percens)
+                    max_per = max(percens)  # elijo el porcentaje mayor, su imagen asociada sera el auto principal de la imagen
 
                     route = "./download/images"
 
@@ -73,8 +73,8 @@ for i in range(1, len(ws_folders)):
 
                     for i in range(0, len(data)):
                         if data[i][0] == max_per:
-                            os.rename(data[i][1], "./download/images/" + jpg_files[a])
-                            shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")
-                            os.remove('./' + 'x' + jpg_files[a])
+                            os.rename(data[i][1], "./download/images/" + jpg_files[a])  # muevo dicha imagen asociada a una carpeta
+                            shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")  # remuevo el directorio con los autos detectados de la imagen original
+                            os.remove('./' + 'x' + jpg_files[a])  # remuevo la imagen que se creo en la deteccion de objetos
                 else:  # no se detectaron autos en la imagen
                     continue
