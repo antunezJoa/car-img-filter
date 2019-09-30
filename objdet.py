@@ -73,7 +73,7 @@ for i in range(1, len(ws_folders)):
 
                     for x in range(0, len(data)):
                         if data[x][0] == max_per:
-                            os.rename(data[i][1], "./download/images/" + jpg_files[a])  # muevo dicha imagen asociada a una carpeta
+                            os.rename(data[x][1], route + jpg_files[a])  # muevo dicha imagen asociada a una carpeta
                             shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")  # remuevo el directorio con los autos detectados de la imagen original
                             os.remove('./' + 'x' + jpg_files[a])  # remuevo la imagen que se creo en la deteccion de objetos
                 else:  # no se detectaron autos en la imagen
