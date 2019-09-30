@@ -66,7 +66,7 @@ for i in range(1, len(ws_folders)):
 
                     max_per = max(percens)  # elijo el porcentaje mayor, su imagen asociada sera el auto principal de la imagen
 
-                    route = "./download/images"
+                    route = "./download/images/"
 
                     if not os.path.exists(route):
                         os.makedirs(route)
