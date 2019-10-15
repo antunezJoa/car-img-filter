@@ -8,7 +8,7 @@ c = 0
 
 ws_folders = os.listdir(path)
 
-for i in range(1, len(ws_folders)):
+for i in range(0, len(ws_folders)):
     b_folders = os.listdir(path + ws_folders[i])
     if 'item_links.json' in b_folders:
         b_folders.remove('item_links.json')
@@ -33,16 +33,16 @@ for i in range(1, len(ws_folders)):
                 detector.loadModel()
 
                 custom_objects = detector.CustomObjects(car=True)
-                detections, objects_path = detector.detectCustomObjectsFromImage(custom_objects=custom_objects, input_image=os.path.join(execution_path, path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]), output_image_path=os.path.join(execution_path, 'x' + jpg_files[a]), minimum_percentage_probability=30, extract_detected_objects=True)
+                detections = detector.detectCustomObjectsFromImage(
+                                                                input_type="file",
+                                                                custom_objects=custom_objects,
+                                                                input_image=os.path.join(execution_path, path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]),
+                                                                output_image_path=os.path.join(execution_path, 'x' + jpg_files[a]),
+                                                                minimum_percentage_probability=30,
+                                                                extract_detected_objects=False)
 
-                for eachObject, eachObjectPath in zip(detections, objects_path):
-                    print(eachObject["name"], " : ", eachObject["percentage_probability"], " : ",
-                          eachObject["box_points"])
-                    print("Object's image saved in " + eachObjectPath)
-                    print("--------------------------------")
-                    c += 1
-
-                if c > 0:  # se detectaron autos en la imagen
+"""
+                if c > 0:  # se detectaron autos (mas de 0) en la imagen
                     image_file = "./download/" + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]
                     img = Image.open(image_file)
                     width, height = img.size
@@ -74,7 +74,14 @@ for i in range(1, len(ws_folders)):
                     for x in range(0, len(data)):
                         if data[x][0] == max_per:
                             os.rename(data[x][1], route + jpg_files[a])  # muevo dicha imagen asociada a una carpeta
-                            shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")  # remuevo el directorio con los autos detectados de la imagen original
-                            os.remove('./' + 'x' + jpg_files[a])  # remuevo la imagen que se creo en la deteccion de objetos
+                            #shutil.rmtree("./" + "x" + jpg_files[a] + "-objects/")  # remuevo el directorio con los autos detectados de la imagen original
+                            #os.remove('./' + 'x' + jpg_files[a])  # remuevo la imagen que se creo en la deteccion de objetos
                 else:  # no se detectaron autos en la imagen
                     continue
+"""
+
+#  todo a la misma carpeta, archivo y json correpsondiente
+#  json de donde viene la imagen (olx o ml)
+#  porcentaje minimo
+#  50% del ancho original
+#  50% del alto origninal
