@@ -1,27 +1,49 @@
 from PIL import Image
-# from imageai.Detection import ObjectDetection
+from imageai.Detection import ObjectDetection
 import os
 import shutil
 import time
 
+image_file = "image.jpg"
 path = "./download/"
-c = 0
+route = path + "images/"
 
-ws_folders = os.listdir(path)
+if not os.path.exists(route):
+    os.makedirs(route)
 
-for i in range(0, len(ws_folders)):
-    b_folders = os.listdir(path + ws_folders[i])
-    if 'item_links.json' in b_folders:
-        b_folders.remove('item_links.json')
-    if 'items.json' in b_folders:
-        b_folders.remove('items.json')
+execution_path = os.getcwd()
 
-    for y in range(0, len(b_folders)):
-        id_folders = os.listdir(path + ws_folders[i] + '/' + b_folders[y])
+detector = ObjectDetection()
+detector.setModelTypeAsRetinaNet()
+detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
+detector.loadModel()
 
-        for z in range(0, len(id_folders)):
-            jpg_files = os.listdir(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z])
-            jpg_files.remove('meta.json')
+custom_objects = detector.CustomObjects(car=True)
+detections = detector.detectCustomObjectsFromImage(
+                                                input_type="file",
+                                                custom_objects=custom_objects,
+                                                input_image=os.path.join(execution_path, "image.jpg"),
+                                                output_image_path=os.path.join(route, "image.jpg"),
+                                                minimum_percentage_probability=30,
+                                                extract_detected_objects=False)
 
-            for a in range(0, len(jpg_files)):
-                print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])
+wh = []
+subimage = []
+
+for i in range(0, len(detections)):
+    dots = detections[i]['box_points']
+    coords = [dots[2]-dots[0], dots[3]-dots[1]]
+    subimage += [[coords[0] * coords[1], dots]]
+    wh += [coords[0] * coords[1]]
+
+maximo = max(wh)
+
+for x in range(0, len(subimage)):
+    if maximo == subimage[x][0]:
+        maximo = subimage[x][1]
+
+img = Image.open(image_file)
+
+im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
+
+im.save(route + "image.jpg")

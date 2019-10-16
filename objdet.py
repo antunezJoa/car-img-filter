@@ -1,10 +1,12 @@
 from PIL import Image
 from imageai.Detection import ObjectDetection
 import os
-import shutil
 
 path = "./download/"
-c = 0
+route = "./images/"
+
+if not os.path.exists(route):
+    os.makedirs(route)
 
 ws_folders = os.listdir(path)
 
@@ -25,6 +27,8 @@ for i in range(0, len(ws_folders)):
             for a in range(0, len(jpg_files)):
                 print(path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a])  # ruta de los archivos .jpg
 
+                image_file = path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]
+
                 execution_path = os.getcwd()
 
                 detector = ObjectDetection()
@@ -37,9 +41,30 @@ for i in range(0, len(ws_folders)):
                                                                 input_type="file",
                                                                 custom_objects=custom_objects,
                                                                 input_image=os.path.join(execution_path, path + ws_folders[i] + '/' + b_folders[y] + '/' + id_folders[z] + '/' + jpg_files[a]),
-                                                                output_image_path=os.path.join(execution_path, 'x' + jpg_files[a]),
+                                                                output_image_path=os.path.join(route, jpg_files[a]),
                                                                 minimum_percentage_probability=30,
                                                                 extract_detected_objects=False)
+
+                wh = []
+                subimage = []
+
+                for i in range(0, len(detections)):
+                    dots = detections[i]['box_points']
+                    coords = [dots[2] - dots[0], dots[3] - dots[1]]
+                    subimage += [[coords[0] * coords[1], dots]]
+                    wh += [coords[0] * coords[1]]
+
+                maximo = max(wh)
+
+                for x in range(0, len(subimage)):
+                    if maximo == subimage[x][0]:
+                        maximo = subimage[x][1]
+
+                img = Image.open(image_file)
+
+                im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
+
+                im.save(route + jpg_files[a])
 
 """
                 if c > 0:  # se detectaron autos (mas de 0) en la imagen
