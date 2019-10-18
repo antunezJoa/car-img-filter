@@ -3,22 +3,24 @@ from imageai.Detection import ObjectDetection
 import os
 import glob
 
-route = "./images/"
+# ML FOLDER
+
+route = "./images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
 if not os.path.exists(route):
     os.makedirs(route)
 
-path = './download/olx/'
+path = './download/ml/'
 
-b_olx_folders = os.listdir(path)
+b_ml_folders = os.listdir(path)  # listado de las carpetas dentro de /ml
 
 big_list = []
 
-print("Making list...")
-for i in b_olx_folders:
-    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/" + i + "/*/*.jpg")
+print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg) de la carpeta de /ml y sus subcarpetas
+for i in b_ml_folders:
+    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/ml/" + i + "/*/*.jpg")
 
 for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace('/home/laboratorio/Descargas/downloaders/', '')
+    big_list[z] = str(big_list[z]).replace('/home/laboratorio/Descargas/downloaders/', '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
 
 for i in range(0, len(big_list)):
     execution_path = os.getcwd()
@@ -34,15 +36,15 @@ for i in range(0, len(big_list)):
         input_type="file",
         custom_objects=custom_objects,
         input_image=os.path.join(execution_path, big_list[i]),
-        output_image_path=os.path.join(route, "car" + str(i) + ".jpg"),
+        output_image_path=os.path.join(route, "mlcar" + str(i) + ".jpg"),
         output_type="file",
         minimum_percentage_probability=90,
         extract_detected_objects=False)
 
-    if len(detections) == 0:
-        os.remove(route + "car" + str(i) + ".jpg")
+    if len(detections) == 0:  # si no detecto autos
+        os.remove(route + "mlcar" + str(i) + ".jpg")  # que borre la foto y continue
         continue
-    else:
+    else:  # si detecto autos
         wh = []
         subimage = []
 
@@ -58,8 +60,8 @@ for i in range(0, len(big_list)):
             if maximo == subimage[x][0]:
                 maximo = subimage[x][1]
 
-        img = Image.open(route + "car" + str(i) + ".jpg")
+        img = Image.open(route + "mlcar" + str(i) + ".jpg")
 
         im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
 
-        im.save(route + "car" + str(i) + ".jpg")
+        im.save(route + "mlcar" + str(i) + ".jpg")
