@@ -2,6 +2,7 @@ from PIL import Image
 from imageai.Detection import ObjectDetection
 import os
 import glob
+import json
 
 # ML FOLDER
 
@@ -44,9 +45,11 @@ for i in range(0, len(big_list)):
     if len(detections) == 0:  # si no detecto autos
         os.remove(route + "mlcar" + str(i) + ".jpg")  # que borre la foto y continue
         continue
+
     else:  # si detecto autos
         wh = []
         subimage = []
+        datos = {}
 
         for y in range(0, len(detections)):
             dots = detections[y]['box_points']
@@ -65,3 +68,12 @@ for i in range(0, len(big_list)):
         im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
 
         im.save(route + "mlcar" + str(i) + ".jpg")
+
+        # creo archivo .json
+
+        datos['website'] = 'ml'
+
+        with open(route + "mlcar" + str(i) + '.json', 'w') as fp:
+            json.dump(datos, fp)
+
+        print("Created .json")
