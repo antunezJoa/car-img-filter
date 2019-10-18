@@ -736,7 +736,7 @@ class ObjectDetection:
 
                         counting += 1
 
-                        objects_dir = output_image_path + "-objects"  #  objects_dir = "./downloaders/images"
+                        objects_dir = output_image_path + "-objects"
                         if (extract_detected_objects == True and output_type == "file"):
                             if (os.path.exists(objects_dir) == False):
                                 os.mkdir(objects_dir)
