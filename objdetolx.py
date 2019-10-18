@@ -31,8 +31,8 @@ for i in range(0, len(big_list)):
     detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
     detector.loadModel()
 
+    print("Analazing", big_list[i])
     custom_objects = detector.CustomObjects(car=True)
-    print(big_list[i])
     detections = detector.detectCustomObjectsFromImage(
         input_type="file",
         custom_objects=custom_objects,
@@ -44,6 +44,7 @@ for i in range(0, len(big_list)):
 
     if len(detections) == 0:  # si no detecto autos
         os.remove(route + "olxcar" + str(i) + ".jpg")  # que borre la foto y continue
+        print("No cars detected")
         continue
 
     else:  # si detecto autos
@@ -68,6 +69,8 @@ for i in range(0, len(big_list)):
         im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
 
         im.save(route + "olxcar" + str(i) + ".jpg")
+
+        print("Car image saved")
 
         # creo archivo .json
 
