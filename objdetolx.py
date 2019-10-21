@@ -37,13 +37,13 @@ for i in range(0, len(big_list)):
         input_type="file",
         custom_objects=custom_objects,
         input_image=os.path.join(execution_path, big_list[i]),
-        output_image_path=os.path.join(route, "olxcar" + str(i) + ".jpg"),
+        output_image_path=os.path.join(route, "olxcar" + str(i + 1) + ".jpg"),
         output_type="file",
         minimum_percentage_probability=90,
         extract_detected_objects=False)
 
     if len(detections) == 0:  # si no detecto autos
-        os.remove(route + "olxcar" + str(i) + ".jpg")  # que borre la foto y continue
+        os.remove(route + "olxcar" + str(i + 1) + ".jpg")  # que borre la foto y continue
         print("No cars detected")
         continue
 
@@ -64,11 +64,11 @@ for i in range(0, len(big_list)):
             if maximo == subimage[x][0]:
                 maximo = subimage[x][1]
 
-        img = Image.open(route + "olxcar" + str(i) + ".jpg")
+        img = Image.open(route + "olxcar" + str(i + 1) + ".jpg")
 
         im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
 
-        im.save(route + "olxcar" + str(i) + ".jpg")
+        im.save(route + "olxcar" + str(i + 1) + ".jpg")
 
         print("Car image saved")
 
@@ -76,7 +76,7 @@ for i in range(0, len(big_list)):
 
         datos['website'] = 'olx'
 
-        with open(route + "olxcar" + str(i) + '.json', 'w') as fp:
+        with open(route + "olxcar" + str(i + 1) + '.json', 'w') as fp:
             json.dump(datos, fp)
 
         print("Created .json")
