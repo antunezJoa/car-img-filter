@@ -21,7 +21,7 @@ for i in b_ml_folders:
     big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/ml/" + i + "/*/*.jpg")
 
 for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace('/home/laboratorio/Descargas/downloaders/', '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
+    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
 
 for i in range(0, len(big_list)):
     execution_path = os.getcwd()
