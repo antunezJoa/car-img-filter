@@ -4,7 +4,7 @@ import os
 import glob
 import json
 
-# OLX FOLDER
+# OLX
 
 route = "./images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
 if not os.path.exists(route):
@@ -50,7 +50,7 @@ for i in range(0, len(big_list)):
     else:  # si detecto autos
         wh = []
         subimage = []
-        datos = {}
+        data = {}
 
         for y in range(0, len(detections)):
             dots = detections[y]['box_points']
@@ -74,9 +74,9 @@ for i in range(0, len(big_list)):
 
         # creo archivo .json
 
-        datos['website'] = 'olx'
+        data['website'] = 'olx'
 
         with open(route + "olxcar" + str(i + 1) + '.json', 'w') as fp:
-            json.dump(datos, fp)
+            json.dump(data, fp)
 
         print("Created .json")

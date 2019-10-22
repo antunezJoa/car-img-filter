@@ -7,7 +7,7 @@ import json
 route = "./images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
 if not os.path.exists(route):
     os.makedirs(route)
-'''
+
 path = './download/'
 
 ws_folders = os.listdir(path)  # listado de las carpetas dentro de /download
@@ -28,12 +28,6 @@ for ws in ws_folders:
     for b in b_folders:
         print(str(ws) + "/" + str(b))
         big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/" + ws + "/" + b + "/*/*.jpg")
-        
-for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
-'''
-
-big_list = ["/home/laboratorio/Descargas/downloaders/download/olx/dodge/914512254/dodge_914512254_1.jpg"]
 
 for z in range(0, len(big_list)):
     big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
@@ -76,7 +70,7 @@ for i in range(0, len(big_list)):
     else:  # si detecto autos
         wh = []
         subimage = []
-        datos = {}
+        data = {}
 
         for y in range(0, len(detections)):
             dots = detections[y]['box_points']
@@ -100,10 +94,10 @@ for i in range(0, len(big_list)):
 
         # creo archivo .json
 
-        datos['website'] = website
+        data['website'] = website
 
         with open(route + "car" + str(i + 1) + '.json', 'w') as fp:
-            json.dump(datos, fp)
+            json.dump(data, fp)
 
         print("Created .json")
         #  .json datos?

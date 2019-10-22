@@ -4,7 +4,7 @@ import os
 import glob
 import json
 
-# ML FOLDER
+# ML
 
 route = "./images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
 if not os.path.exists(route):
@@ -37,20 +37,20 @@ for i in range(0, len(big_list)):
         input_type="file",
         custom_objects=custom_objects,
         input_image=os.path.join(execution_path, big_list[i]),
-        output_image_path=os.path.join(route, "mlcar" + str(i) + ".jpg"),
+        output_image_path=os.path.join(route, "mlcar" + str(i + 1) + ".jpg"),
         output_type="file",
         minimum_percentage_probability=90,
         extract_detected_objects=False)
 
     if len(detections) == 0:  # si no detecto autos
-        os.remove(route + "mlcar" + str(i) + ".jpg")  # que borre la foto y continue
+        os.remove(route + "mlcar" + str(i + 1) + ".jpg")  # que borre la foto y continue
         print("No cars detected")
         continue
 
     else:  # si detecto autos
         wh = []
         subimage = []
-        datos = {}
+        data = {}
 
         for y in range(0, len(detections)):
             dots = detections[y]['box_points']
@@ -64,19 +64,19 @@ for i in range(0, len(big_list)):
             if maximo == subimage[x][0]:
                 maximo = subimage[x][1]
 
-        img = Image.open(route + "mlcar" + str(i) + ".jpg")
+        img = Image.open(route + "mlcar" + str(i + 1) + ".jpg")
 
         im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
 
-        im.save(route + "mlcar" + str(i) + ".jpg")
+        im.save(route + "mlcar" + str(i + 1) + ".jpg")
 
         print("Car image saved")
 
         # creo archivo .json
 
-        datos['website'] = 'ml'
+        data['website'] = 'ml'
 
-        with open(route + "mlcar" + str(i) + '.json', 'w') as fp:
-            json.dump(datos, fp)
+        with open(route + "mlcar" + str(i + 1) + '.json', 'w') as fp:
+            json.dump(data, fp)
 
         print("Created .json")
