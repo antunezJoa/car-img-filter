@@ -15,13 +15,19 @@ path = './download/olx/'
 b_olx_folders = os.listdir(path)  # listado de las carpetas dentro de /olx
 
 big_list = []
+cont = 0
 
-print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg) de la carpeta de /olx y sus subcarpetas
-for i in b_olx_folders:
-    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/" + i + "/*/*.jpg")
+print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
+# de la carpeta de /olx y sus subcarpetas
+
+for brand in b_olx_folders:
+    print(brand, "/", cont + 1, "de", len(b_olx_folders))
+    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/" + brand + "/*/*.jpg")
+    cont += 1
 
 for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
+    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
+    # porque ya se predefine en la librera de imageAI al estar el archivo dentro de /downloaders
 
 for i in range(0, len(big_list)):
     execution_path = os.getcwd()

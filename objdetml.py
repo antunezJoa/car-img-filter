@@ -15,13 +15,19 @@ path = './download/ml/'
 b_ml_folders = os.listdir(path)  # listado de las carpetas dentro de /ml
 
 big_list = []
+cont = 0
 
-print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg) de la carpeta de /ml y sus subcarpetas
-for i in b_ml_folders:
-    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/ml/" + i + "/*/*.jpg")
+print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
+# de la carpeta de /ml y sus subcarpetas
+
+for brand in b_ml_folders:
+    print(brand, "/", cont + 1, "de", len(b_ml_folders))
+    big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/ml/" + brand + "/*/*.jpg")
+    cont += 1
 
 for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta porque ya se predefinio en la librera de imageAI
+    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
+    # porque ya se predefinio en la librera de imageAI
 
 for i in range(0, len(big_list)):
     execution_path = os.getcwd()
