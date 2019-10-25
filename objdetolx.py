@@ -13,15 +13,19 @@ if not os.path.exists(route):
 path = './download/olx/'
 
 b_olx_folders = os.listdir(path)  # listado de las carpetas dentro de /olx
+if 'item_links.json' in b_olx_folders:
+    b_olx_folders.remove('item_links.json')
+if 'info.json' in b_olx_folders:
+    b_olx_folders.remove('info.json')
 
 big_list = []
 cont = 0
 
-print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
+print("Making olx list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
 # de la carpeta de /olx y sus subcarpetas
 
 for brand in b_olx_folders:
-    print(brand, "/", cont + 1, "de", len(b_olx_folders))
+    print(brand, "/", cont + 1, "of", len(b_olx_folders))
     big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/" + brand + "/*/*.jpg")
     cont += 1
 
@@ -37,7 +41,7 @@ for i in range(0, len(big_list)):
     detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
     detector.loadModel()
 
-    print("Analazing", big_list[i])
+    print("Analazing", big_list[i], "/ image", (i + 1), "of", len(big_list))
     custom_objects = detector.CustomObjects(car=True)
     detections = detector.detectCustomObjectsFromImage(
         input_type="file",

@@ -18,6 +18,7 @@ print("Making list...")  # lista con las rutas de todas las imagenes (archivos .
 # de la carpeta de las subcarpetas de download/
 
 for ws in ws_folders:
+    print(ws)
 
     b_folders = os.listdir(path + str(ws))
     if 'item_links.json' in b_folders:
@@ -30,10 +31,9 @@ for ws in ws_folders:
     cont = 0
 
     for b in b_folders:
-        print(ws, "/", b, "/", cont + 1, "de", len(b_folders))
+        print(ws, "/", b, "/", cont + 1, "of", len(b_folders))
         big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/" + ws + "/" + b + "/*/*.jpg")
         cont += 1
-
 
 for z in range(0, len(big_list)):
     big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
@@ -47,7 +47,7 @@ for i in range(0, len(big_list)):
     detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
     detector.loadModel()
 
-    print("Analazing", big_list[i])
+    print("Analazing", big_list[i], "/ image", (i + 1), "of", len(big_list))
     if 'ml' in big_list[i]:
         website = 'ml'
     elif 'olx' in big_list[i]:
@@ -107,4 +107,3 @@ for i in range(0, len(big_list)):
             json.dump(data, fp)
 
         print("Created .json")
-        #  .json datos?

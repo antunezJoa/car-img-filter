@@ -13,15 +13,19 @@ if not os.path.exists(route):
 path = './download/ml/'
 
 b_ml_folders = os.listdir(path)  # listado de las carpetas dentro de /ml
+if 'item_links.json' in b_ml_folders:
+    b_ml_folders.remove('item_links.json')
+if 'info.json' in b_ml_folders:
+    b_ml_folders.remove('info.json')
 
 big_list = []
 cont = 0
 
-print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
+print("Making mercado libre list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
 # de la carpeta de /ml y sus subcarpetas
 
 for brand in b_ml_folders:
-    print(brand, "/", cont + 1, "de", len(b_ml_folders))
+    print(brand, "/", cont + 1, "of", len(b_ml_folders))
     big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/ml/" + brand + "/*/*.jpg")
     cont += 1
 
@@ -37,7 +41,7 @@ for i in range(0, len(big_list)):
     detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
     detector.loadModel()
 
-    print("Analazing", big_list[i])
+    print("Analazing", big_list[i], "/ image", (i + 1), "of", len(big_list))
     custom_objects = detector.CustomObjects(car=True)
     detections = detector.detectCustomObjectsFromImage(
         input_type="file",
