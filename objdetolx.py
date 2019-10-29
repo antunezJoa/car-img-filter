@@ -30,7 +30,7 @@ for brand in b_olx_folders:
     cont += 1
 
 for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
+    big_list[z] = big_list[z].replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
     # porque ya se predefine en la librera de imageAI al estar el archivo dentro de /downloaders
 
 for i in range(0, len(big_list)):
