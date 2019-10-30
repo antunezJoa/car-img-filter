@@ -3,12 +3,13 @@ import glob
 import json
 
 brand_folders = os.listdir("./download/olx/")
+count = 0
 
 print("MAKING LIST...")
 jsonlist = glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/*/*/meta.json")
 
 for x in jsonlist:
-    print(x)
+    print(x, "/", count + 1, "of", len(jsonlist))
     with open(x, 'r') as f:
         car_data = f.read()
 
