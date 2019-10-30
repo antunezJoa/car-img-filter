@@ -1,109 +1,165 @@
-from PIL import Image
+#  from PIL import Image
 from imageai.Detection import ObjectDetection
 import os
 import glob
 import json
+import shutil
 
-route = "./images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
-if not os.path.exists(route):
-    os.makedirs(route)
 
-path = './download/'
+def makelist():
+    route = "./detections/images/"  # en esta carpeta se guardaran las imagenes filtradas y sus respectivos .json
+    if not os.path.exists(route):
+        os.makedirs(route)
 
-ws_folders = os.listdir(path)  # listado de las carpetas dentro de /download
+    ws_folders = os.listdir('./download/')  # listado de las carpetas dentro de /download
 
-big_list = []
+    big_list = []
+    jpglist = {}
+    y = 0
 
-print("Making list...")  # lista con las rutas de todas las imagenes (archivos .jpg)
-# de la carpeta de las subcarpetas de download/
+    for ws in ws_folders:
+        print("MAKING", ws.upper(), "LIST...")
 
-for ws in ws_folders:
-    print(ws)
+        b_folders = os.listdir(path + str(ws))
+        if 'item_links.json' in b_folders:
+            b_folders.remove('item_links.json')
+        if 'items.json' in b_folders:
+            b_folders.remove('items.json')
+        if 'info.json' in b_folders:
+            b_folders.remove('info.json')
 
-    b_folders = os.listdir(path + str(ws))
-    if 'item_links.json' in b_folders:
-        b_folders.remove('item_links.json')
-    if 'items.json' in b_folders:
-        b_folders.remove('items.json')
-    if 'info.json' in b_folders:
-        b_folders.remove('info.json')
+        cont = 0
 
-    cont = 0
+        for b in b_folders:
+            print(ws, "/", b, "/", cont + 1, "of", len(b_folders))
+            big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/" + ws + "/" + b + "/*/*.jpg")
+            cont += 1
 
-    for b in b_folders:
-        print(ws, "/", b, "/", cont + 1, "of", len(b_folders))
-        big_list += glob.glob("/home/laboratorio/Descargas/downloaders/download/" + ws + "/" + b + "/*/*.jpg")
-        cont += 1
+    for z in range(0, len(big_list)):
+        big_list[z] = big_list[z].replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta
+        # ruta porque ya se predefine en la librera de imageAI al estar el archivo dentro de /downloaders
+        jpglist['jpg' + str(y)] = big_list[z]
+        with open('./detections/jpglist.json', "w") as file:
+            json.dump(jpglist, file)
+        print("Saved", jpglist['jpg' + str(y)], "images saved:", y)
+        y += 1
 
-for z in range(0, len(big_list)):
-    big_list[z] = str(big_list[z]).replace("/home/laboratorio/Descargas/downloaders/", '')  # reemplazo esta ruta
-    # porque ya se predefinio en la librera de imageAI
+    jpglist['images_number'] = y
+    with open('./detections/images.json', "w") as file:
+        json.dump(jpglist, file)
 
-for i in range(0, len(big_list)):
-    execution_path = os.getcwd()
+    print("Images saved")
 
-    detector = ObjectDetection()
-    detector.setModelTypeAsRetinaNet()
-    detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
-    detector.loadModel()
 
-    print("Analazing", big_list[i], "/ image", (i + 1), "of", len(big_list))
-    if 'ml' in big_list[i]:
-        website = 'ml'
-    elif 'olx' in big_list[i]:
-        website = 'olx'
-    elif 'demotores' in big_list[i]:
-        website = 'demotores'
-    elif 'rosariogarage' in big_list[i]:
-        website = 'rosariogarage'
-    else:
-        website = 'unknown'
+def car_detections():
+    images = {}
 
-    custom_objects = detector.CustomObjects(car=True)
-    detections = detector.detectCustomObjectsFromImage(
-        input_type="file",
-        custom_objects=custom_objects,
-        input_image=os.path.join(execution_path, big_list[i]),
-        output_image_path=os.path.join(route, "car" + str(i + 1) + ".jpg"),
-        output_type="file",
-        minimum_percentage_probability=90,
-        extract_detected_objects=False)
+    with open('./detections/jpglist.json', 'r') as f:
+        jpgs = f.read()
 
-    if len(detections) == 0:  # no detecto autos
-        os.remove(route + "car" + str(i + 1) + ".jpg")  # que borre la foto y continue
-        print("No cars detected")
-        continue
+    paths = json.loads(jpgs)
 
-    else:  # si detecto autos
-        wh = []
-        subimage = []
-        data = {}
+    imgdet = 11  # downloads es el contador que indica en cual link arranca la descarga de imagenes
 
-        for y in range(0, len(detections)):
-            dots = detections[y]['box_points']
-            coords = [dots[2] - dots[0], dots[3] - dots[1]]
-            subimage += [[coords[0] * coords[1], dots]]
-            wh += [coords[0] * coords[1]]
+    images_number = 12  # aca va el numero de links guardados en el json
 
-        maximo = max(wh)
+    for imgdet in range(imgdet, images_number):
+        #  en caso de no poder ver el error en consola y ver en que imagen te quedaste
+        #  creo un archivo que va guardando el ultimo estado de imgdet, o sea la ultima imagen que analicé
 
-        for x in range(0, len(subimage)):
-            if maximo == subimage[x][0]:
-                maximo = subimage[x][1]
+        images['images'] = imgdet
+        with open('./detections/info.json', "w") as file:
+            json.dump(images, file)
 
-        img = Image.open(route + "car" + str(i + 1) + ".jpg")
+        realimage = paths['jpg' + str(imgdet)]  # realimage es la imagen original la cual hay que analizar
 
-        im = img.crop((maximo[0], maximo[1], maximo[2], maximo[3]))
+        execution_path = os.getcwd()
 
-        im.save(route + "car" + str(i + 1) + ".jpg")
+        detector = ObjectDetection()
+        detector.setModelTypeAsRetinaNet()
+        detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
+        detector.loadModel()
 
-        print("Car image saved")
+        print("Analazing", realimage, "/ image", imgdet, "of", images_number)
 
-        # creo archivo .json
+        # defino de que sitio web proviene
+        if 'ml' in realimage:
+            website = 'ml'
+        elif 'olx' in realimage:
+            website = 'olx'
+        elif 'demotores' in realimage:
+            website = 'demotores'
+        elif 'rosariogarage' in realimage:
+            website = 'rosariogarage'
+        else:
+            website = 'unknown'
 
-        data['website'] = website
+        custom_objects = detector.CustomObjects(car=True)
+        detections = detector.detectCustomObjectsFromImage(
+            input_type="file",
+            custom_objects=custom_objects,
+            input_image=os.path.join(execution_path, realimage),
+            output_image_path=os.path.join("./detections/images/car" + str(imgdet + 1) + ".jpg"),
+            output_type="file",
+            minimum_percentage_probability=90,
+            extract_detected_objects=False)
 
-        with open(route + "car" + str(i + 1) + '.json', 'w') as fp:
-            json.dump(data, fp)
+        if len(detections) == 0:  # no detecto autos
+            os.remove("./detections/images/car" + str(imgdet + 1) + ".jpg")  # que borre la foto y continue
+            print("No cars detected")
+            continue
 
-        print("Created .json")
+        else:  # si detecto autos
+            wh = []
+            sub_image = []
+
+            for y in range(0, len(detections)):
+                dots = detections[y]['box_points']
+                coords = [dots[2] - dots[0], dots[3] - dots[1]]
+                sub_image += [[coords[0] * coords[1], dots]]
+                wh += [coords[0] * coords[1]]
+
+            maximo = max(wh)
+
+            for x in range(0, len(sub_image)):
+                if maximo == sub_image[x][0]:
+                    maximo = sub_image[x][1]
+
+            os.remove("./detections/images/car" + str(imgdet + 1) + ".jpg")  # remuevo la imagen con las detecciones
+            print("Image removed")
+            shutil.copy(realimage, "./detections/images/car" + str(imgdet + 1) + ".jpg")  # copio la imagen original
+            print("Original image saved")
+
+            # JSON:
+            # traigo los datos del auto que estan en el .json en la carpeta original para tambien guardarlos en el
+            # nuevo json
+
+            realjson = os.path.dirname(os.path.abspath(realimage) + "/meta.json")
+
+            with open(realjson, 'r') as f:
+                car_data = f.read()
+
+            data = json.loads(car_data)
+
+            # agrego un par de datos mas al .json
+
+            data['website'] = website  # guardo sitio web de donde proviene
+            data['boxpoints'] = maximo  # guardo los 4 puntos que forman un cuadrilatero en el que se encuentra
+            # el auto principal
+
+            # guardo el .json
+
+            with open("./detections/images/car" + str(imgdet + 1) + ".json", 'w') as fp:
+                json.dump(data, fp)
+
+            print("Created .json")
+
+    print("End")
+
+
+path = './detections/jpglist.json'
+
+if not os.path.exists(path):
+    makelist()
+else:
+    car_detections()
