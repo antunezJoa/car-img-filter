@@ -5,7 +5,7 @@ import json
 brand_folders = os.listdir("./download/olx/")
 count = 0
 
-print("MAKING LIST...")
+print("MAKING meta.json LIST...")
 jsonlist = glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/*/*/meta.json")
 
 for x in jsonlist:
@@ -16,7 +16,8 @@ for x in jsonlist:
     data = json.loads(car_data)
 
     if 'Marca / Modelo:' not in data:
-        print("'Marca / Modelo:' not in json")
+        print("'Marca / Modelo:' NOT IN JSON")
+        count += 1
         continue
 
     else:
@@ -31,3 +32,4 @@ for x in jsonlist:
             json.dump(data, fp)
 
         print("saved new .json")
+        count += 1

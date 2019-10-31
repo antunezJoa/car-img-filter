@@ -1,4 +1,3 @@
-#  from PIL import Image
 from imageai.Detection import ObjectDetection
 import os
 import glob
@@ -20,7 +19,7 @@ def makelist():
     for ws in ws_folders:
         print("MAKING", ws.upper(), "LIST...")
 
-        b_folders = os.listdir(path + str(ws))
+        b_folders = os.listdir('./download/' + str(ws))
         if 'item_links.json' in b_folders:
             b_folders.remove('item_links.json')
         if 'items.json' in b_folders:
@@ -59,9 +58,9 @@ def car_detections():
 
     paths = json.loads(jpgs)
 
-    imgdet = 11  # downloads es el contador que indica en cual link arranca la descarga de imagenes
+    imgdet = 0  # downloads es el contador que indica en cual link arranca la descarga de imagenes
 
-    images_number = 12  # aca va el numero de links guardados en el json
+    images_number = 2  # aca va el numero de links guardados en el json
 
     for imgdet in range(imgdet, images_number):
         #  en caso de no poder ver el error en consola y ver en que imagen te quedaste
@@ -80,9 +79,9 @@ def car_detections():
         detector.setModelPath(os.path.join(execution_path, "resnet50_coco_best_v2.0.1.h5"))
         detector.loadModel()
 
-        print("Analazing", realimage, "/ image", imgdet, "of", images_number)
+        print("Analazing", realimage, "/ image", imgdet + 1, "of", images_number)
 
-        # defino de que sitio web proviene
+        # defino de que sitio web proviene para luego colocarlo en el json
         if 'ml' in realimage:
             website = 'ml'
         elif 'olx' in realimage:
@@ -110,6 +109,9 @@ def car_detections():
             continue
 
         else:  # si detecto autos
+
+            # a continuacion el proceso para obtener el auto de mayor relevancia
+
             wh = []
             sub_image = []
 
@@ -134,7 +136,7 @@ def car_detections():
             # traigo los datos del auto que estan en el .json en la carpeta original para tambien guardarlos en el
             # nuevo json
 
-            realjson = os.path.dirname(os.path.abspath(realimage) + "/meta.json")
+            realjson = os.path.dirname(os.path.abspath(realimage)) + "/meta.json"
 
             with open(realjson, 'r') as f:
                 car_data = f.read()
@@ -143,7 +145,7 @@ def car_detections():
 
             # agrego un par de datos mas al .json
 
-            data['website'] = website  # guardo sitio web de donde proviene
+            data['Web Site'] = website  # guardo sitio web de donde proviene
             data['boxpoints'] = maximo  # guardo los 4 puntos que forman un cuadrilatero en el que se encuentra
             # el auto principal
 
@@ -163,3 +165,5 @@ if not os.path.exists(path):
     makelist()
 else:
     car_detections()
+
+    # demotores.py?
