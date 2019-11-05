@@ -8,9 +8,9 @@ count = 0
 print("MAKING meta.json LIST...")
 jsonlist = glob.glob("/home/laboratorio/Descargas/downloaders/download/olx/*/*/meta.json")
 
-for x in jsonlist:
-    print(x, "/", count + 1, "of", len(jsonlist))
-    with open(x, 'r') as f:
+for json in jsonlist:
+    print(json, "/", count + 1, "of", len(jsonlist))
+    with open(json, 'r') as f:
         car_data = f.read()
 
     data = json.loads(car_data)
@@ -21,14 +21,14 @@ for x in jsonlist:
         continue
 
     else:
-        for i in brand_folders:
-            if i in data['Marca / Modelo:'].lower():
-                data['Marca:'] = i.capitalize()
-                data['Marca / Modelo:'] = data['Marca / Modelo:'][len(i)+1:]
+        for brand in brand_folders:
+            if brand in data['Marca / Modelo:'].lower():
+                data['Marca:'] = brand.capitalize()
+                data['Marca / Modelo:'] = data['Marca / Modelo:'][len(brand)+1:]
 
         data['Modelo:'] = data.pop('Marca / Modelo:')
 
-        with open(x, 'w') as fp:
+        with open(json, 'w') as fp:
             json.dump(data, fp)
 
         print("saved new .json")
