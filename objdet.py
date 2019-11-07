@@ -17,7 +17,7 @@ def makelist():
     y = 0
 
     for ws in ws_folders:
-        print("MAKING", ws.upper(), "LIST...")
+        print("MAKING THE", ws.upper(), "PHOTO LIST...")
 
         b_folders = os.listdir('./download/' + str(ws))
         if 'item_links.json' in b_folders:
@@ -60,7 +60,7 @@ def car_detections():
 
     imgdet = 0  # downloads es el contador que indica en cual link arranca la descarga de imagenes
 
-    images_number = 2  # aca va el numero de links guardados en el json
+    images_number = 300000  # aca va el numero de links guardados en el json
 
     for imgdet in range(imgdet, images_number):
         #  en caso de no poder ver el error en consola y ver en que imagen te quedaste
@@ -136,7 +136,8 @@ def car_detections():
             # traigo los datos del auto que estan en el .json en la carpeta original para tambien guardarlos en el
             # nuevo json
 
-            realjson = os.path.dirname(os.path.abspath(realimage)) + "/meta.json"
+            realjson = os.path.dirname(os.path.abspath(realimage)) + "/meta.json"  # obtengo el meta.json que esta en
+            # en el mismo path que la imagen que estoy analizando
 
             with open(realjson, 'r') as f:
                 car_data = f.read()
@@ -145,9 +146,9 @@ def car_detections():
 
             # agrego un par de datos mas al .json
 
-            data['Web Site'] = website  # guardo sitio web de donde proviene
-            data['boxpoints'] = maximo  # guardo los 4 puntos que forman un cuadrilatero en el que se encuentra
-            # el auto principal
+            data['Web Site'] = website  # guardo sitio web de donde proviene la imagen
+            data['boxpoints'] = maximo  # guardo los 4 puntos que forman el cuadrilatero donde se encuentra
+            # el auto principal de la imagen en cuestion
 
             # guardo el .json
 
@@ -159,11 +160,10 @@ def car_detections():
     print("End")
 
 
-path = './detections/jpglist.json'
+jpg_list = './detections/jpglist.json'  # si no existe la lista de las fotos la creo, sino arranco con las detecciones
+# pues la lista de fotos ya existe
 
-if not os.path.exists(path):
+if not os.path.exists(jpg_list):
     makelist()
 else:
     car_detections()
-
-    # demotores.py?
